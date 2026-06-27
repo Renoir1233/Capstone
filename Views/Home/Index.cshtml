@@ -1,0 +1,1201 @@
+@{
+    ViewData["Title"] = "UniHealth Clinic Portal";
+}
+
+<!-- ==========================================
+     LOGIN VIEW (Image 1)
+     ========================================== -->
+<div id="login-view" class="login-wrapper">
+    <div class="login-card">
+        <div class="login-logo-container">
+            <div class="login-logo-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <span class="login-logo-text">UniHealth</span>
+        </div>
+        <div class="login-subtitle">Smart Employee Healthcare Management</div>
+        
+        <form id="login-form" onsubmit="event.preventDefault(); app.login();">
+            <div class="form-group">
+                <label for="username">Employee ID / Username</label>
+                <input type="text" id="username" class="form-control-custom" required autocomplete="username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control-custom" required autocomplete="current-password" placeholder="Enter password">
+            </div>
+            <div id="login-error" style="display:none; color:#ef4444; font-size:13px; font-weight:600; margin-bottom:8px; padding:10px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px;"></div>
+            <button type="submit" class="btn-signin">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================
+     PORTAL VIEW (Images 2-5)
+     ========================================== -->
+<div id="portal-view" class="portal-container" style="display: none;">
+    <!-- LEFT SIDEBAR -->
+    <aside class="portal-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <div>
+                    <span class="sidebar-logo-name">UniHealth</span>
+                    <span class="sidebar-logo-sub">Clinic Portal</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link-custom active" data-tab="dashboard-tab">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-title">Core Modules</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="queue-tab">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                        <span>Queue Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="emr-tab">
+                        <i class="fa-solid fa-folder-medical"></i>
+                        <span>EMR Records</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="pharmacy-tab">
+                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                        <span>Pharmacy Stock</span>
+                        <span class="nav-badge-dot" id="pharmacy-badge"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-title">Programs</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="wellness-tab">
+                        <i class="fa-solid fa-heart-circle-check"></i>
+                        <span>Wellness Hub</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-title">Analytics</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="trends-tab">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <span>Health Trends</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link-custom" data-tab="reports-tab">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>HR Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-profile">
+                    <div class="user-avatar" id="user-avatar-initials">JDS</div>
+                    <div class="user-details">
+                        <span class="user-name" id="user-display-name">Dr. Jane D. Smith</span>
+                        <span class="user-role">Head Physician</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Log Out" onclick="app.logout();">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main class="portal-main">
+        <header class="portal-header">
+            <div class="header-title" id="page-title">Dashboard</div>
+            <div class="header-actions">
+                <button class="btn-icon" title="Notifications" onclick="app.toggleNotifications()">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge-dot"></span>
+                </button>
+                <button class="btn-primary-custom" onclick="app.openNewVisitModal()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Visit</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <!-- ==========================================
+                 DASHBOARD TAB (Image 2)
+                 ========================================== -->
+            <section id="dashboard-tab" class="tab-section active">
+                <div class="stats-grid">
+                    <!-- Today's Visits -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Today's Visits</span>
+                            <span class="stats-number" id="stat-today-visits">24</span>
+                            <span class="stats-trend up">
+                                <i class="fa-solid fa-arrow-up"></i> 12% vs yesterday
+                            </span>
+                        </div>
+                        <div class="stats-icon-wrapper visit">
+                            <i class="fa-solid fa-temperature-three-quarters"></i>
+                        </div>
+                    </div>
+                    <!-- Low Stock Items -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Low Stock Items</span>
+                            <span class="stats-number text-danger" id="stat-low-stock">6</span>
+                            <span class="stats-trend warning">Requires Urgent Action</span>
+                        </div>
+                        <div class="stats-icon-wrapper stock">
+                            <i class="fa-solid fa-capsules"></i>
+                        </div>
+                    </div>
+                    <!-- Sick Leaves (Month) -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Sick Leaves (Month)</span>
+                            <span class="stats-number" id="stat-sick-leaves">42</span>
+                            <span class="stats-trend down">
+                                <i class="fa-solid fa-arrow-down"></i> 5% vs last month
+                            </span>
+                        </div>
+                        <div class="stats-icon-wrapper leave">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <!-- Company Health Score -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Company Health Score</span>
+                            <span class="stats-number text-success" id="stat-health-score">86%</span>
+                            <span class="stats-trend neutral">Good standing</span>
+                        </div>
+                        <div class="stats-icon-wrapper score">
+                            <i class="fa-regular fa-heart"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid-2">
+                    <!-- Line Chart: Monthly Clinic Visits -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Monthly Clinic Visits</span>
+                        </div>
+                        <div class="chart-body" style="height: 280px;">
+                            <canvas id="monthlyVisitsChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Doughnut Chart: Top Illnesses YTD -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <i class="fa-solid fa-microscope"></i>
+                            <span>Top Illnesses (YTD)</span>
+                        </div>
+                        <div class="chart-body" style="height: 220px;">
+                            <canvas id="topIllnessesChart"></canvas>
+                        </div>
+                        <div class="doughnut-legend-container">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #10b981;"></div>
+                                <span>Upper Respiratory</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #3b82f6;"></div>
+                                <span>Hypertension</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #8b5cf6;"></div>
+                                <span>Gastroenteritis</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #f59e0b;"></div>
+                                <span>Back Pain</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #ef4444;"></div>
+                                <span>Headache</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #475569;"></div>
+                                <span>Others</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visits by Department -->
+                <div class="chart-card-full">
+                    <div class="chart-header">
+                        <i class="fa-solid fa-building-user"></i>
+                        <span>Visits by Department</span>
+                    </div>
+                    <div class="chart-body" style="height: 220px;">
+                        <canvas id="deptVisitsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 QUEUE MANAGEMENT TAB (Image 3)
+                 ========================================== -->
+            <section id="queue-tab" class="tab-section">
+                <div class="queue-grid">
+                    <!-- Column 1: Waiting Room -->
+                    <div class="queue-column">
+                        <div class="queue-column-header">
+                            <span class="queue-column-title">Waiting Room</span>
+                            <span class="queue-column-badge" id="waiting-count">0</span>
+                        </div>
+                        <div class="queue-card-list" id="waiting-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Column 2: With Doctor -->
+                    <div class="queue-column">
+                        <div class="queue-column-header">
+                            <span class="queue-column-title">With Doctor</span>
+                            <span class="queue-column-badge" id="doctor-count">0</span>
+                        </div>
+                        <div class="queue-card-list" id="doctor-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Cleared Today -->
+                    <div class="queue-column">
+                        <div class="queue-column-header">
+                            <span class="queue-column-title">Cleared Today</span>
+                            <span class="queue-column-badge" id="cleared-count">0</span>
+                        </div>
+                        <div class="queue-card-list" id="cleared-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 EMR RECORDS TAB (Image 4)
+                 ========================================== -->
+            <section id="emr-tab" class="tab-section">
+                <div class="emr-controls">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="emr-search" class="search-input-custom" placeholder="Search by name, ID, or department..." oninput="app.searchEmployees()">
+                    </div>
+                    <div class="filter-pills-row">
+                        <button class="filter-pill active" onclick="app.filterDepartment(this, 'all')">All Employees</button>
+                        <button class="filter-pill" onclick="app.filterDepartment(this, 'Operations')">Operations</button>
+                        <button class="filter-pill" onclick="app.filterDepartment(this, 'Finance')">Finance</button>
+                        <button class="filter-pill" onclick="app.filterDepartment(this, 'HR')">HR</button>
+                        <button class="filter-pill" onclick="app.filterDepartment(this, 'IT')">IT</button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Emp ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emr-table-body">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 PHARMACY STOCK TAB (Image 5)
+                 ========================================== -->
+            <section id="pharmacy-tab" class="tab-section">
+                <div class="pharmacy-stats">
+                    <!-- Total Medicines -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Total Medicines</span>
+                            <span class="stats-number" id="pharmacy-stat-total">1,240</span>
+                            <span class="stats-trend neutral" style="color: #059669;">Across 45 varieties</span>
+                        </div>
+                        <div class="stats-icon-wrapper score">
+                            <i class="fa-solid fa-box-open" style="color: #059669;"></i>
+                        </div>
+                    </div>
+                    <!-- Low Stock Alerts -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Low Stock Alerts</span>
+                            <span class="stats-number text-danger" id="pharmacy-stat-low">5</span>
+                            <span class="stats-trend warning">Needs restocking soon</span>
+                        </div>
+                        <div class="stats-icon-wrapper stock">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                    </div>
+                    <!-- Expiring Soon -->
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Expiring Soon</span>
+                            <span class="stats-number text-warning" style="color: #d97706;" id="pharmacy-stat-expiring">2</span>
+                            <span class="stats-trend warning" style="color: #d97706;">Within 30 days</span>
+                        </div>
+                        <div class="stats-icon-wrapper leave" style="background-color: #fffbeb; color: #d97706;">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid-2">
+                    <!-- Inventory Status & Alerts Table -->
+                    <div class="stock-table-card">
+                        <div class="chart-header" style="justify-content: space-between;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <i class="fa-solid fa-square-poll-vertical"></i>
+                                <span>Inventory Status &amp; Alerts</span>
+                            </div>
+                            <button class="btn-primary-custom" style="font-size:12px; padding:6px 14px;" onclick="app.openAddMedicineModal()">
+                                <i class="fa-solid fa-plus"></i> Add Medicine
+                            </button>
+                        </div>
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Stock Level</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pharmacy-table-body">
+                                <!-- Populated dynamically via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Line Chart: Dispensing Trends -->
+                    <div class="chart-card">
+                        <div class="chart-header" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-chart-line"></i>
+                                <span>Dispensing Trends (Last 8 Weeks)</span>
+                            </div>
+                            <span id="dispensing-chart-subtitle" style="font-size:12px; color:#94a3b8; font-weight:400; padding-left:28px;">Loading…</span>
+                        </div>
+                        <div class="chart-body" style="height: 300px;">
+                            <canvas id="dispensingTrendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 WELLNESS HUB TAB
+                 ========================================== -->
+            <section id="wellness-tab" class="tab-section">
+                <div class="chart-card-full" style="margin-bottom: 24px;">
+                    <div class="chart-header" style="justify-content: space-between;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <i class="fa-solid fa-heart-circle-check"></i>
+                            <span>Corporate Health & Wellness Programs</span>
+                        </div>
+                        <button class="btn-primary-custom" style="font-size:12px; padding:6px 14px;" onclick="app.openCreateProgramModal()">
+                            <i class="fa-solid fa-plus"></i> New Program
+                        </button>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                        Interactive overview of planned preventive seminars, vaccinations, and fitness workshops designed for shipyard staff.
+                    </p>
+                    <div class="table-card">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Program Title</th>
+                                    <th>Category</th>
+                                    <th>Target Department</th>
+                                    <th>Date</th>
+                                    <th>Registered Employees</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wellness-programs-tbody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center; color:#94a3b8; padding:20px;">Loading programs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 HEALTH TRENDS TAB
+                 ========================================== -->
+            <section id="trends-tab" class="tab-section">
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Avg. Consultation Time</span>
+                            <span class="stats-number" id="trend-avg-time">--</span>
+                            <span class="stats-trend up" id="trend-avg-time-change"><i class="fa-solid fa-arrow-down"></i> Loading...</span>
+                        </div>
+                        <div class="stats-icon-wrapper visit"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Top Consultation Day</span>
+                            <span class="stats-number" id="trend-top-day">--</span>
+                            <span class="stats-trend neutral" id="trend-top-day-pct">-- of weekly visits</span>
+                        </div>
+                        <div class="stats-icon-wrapper leave"><i class="fa-regular fa-calendar"></i></div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Referral Rate</span>
+                            <span class="stats-number" id="trend-referral-rate">--</span>
+                            <span class="stats-trend up" id="trend-referral-change"><i class="fa-solid fa-arrow-down"></i> Loading...</span>
+                        </div>
+                        <div class="stats-icon-wrapper score"><i class="fa-solid fa-file-waveform"></i></div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-info">
+                            <span class="stats-label">Preventive Checkups</span>
+                            <span class="stats-number" id="trend-preventive-rate">--</span>
+                            <span class="stats-trend up" id="trend-preventive-change"><i class="fa-solid fa-arrow-up"></i> Loading...</span>
+                        </div>
+                        <div class="stats-icon-wrapper stock" style="background-color: #ecfdf5; color: #10b981;"><i class="fa-solid fa-user-shield"></i></div>
+                    </div>
+                </div>
+                <div class="chart-card-full">
+                    <div class="chart-header">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <span>Consultation Health Trends Insights</span>
+                    </div>
+                    <p id="trend-insights-text" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+                        Loading analytics data...
+                    </p>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 HR REPORTS TAB
+                 ========================================== -->
+            <section id="reports-tab" class="tab-section">
+                <div class="chart-card-full" style="margin-bottom: 24px;">
+                    <div class="chart-header">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Available HR Health Reports</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                        Securely generated, aggregated, and anonymized employee health statistics exported for HR decision planning.
+                    </p>
+                    <div class="table-card">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Report Title</th>
+                                    <th>Generation Date</th>
+                                    <th>Requested Period</th>
+                                    <th>Scope</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 600;">Monthly Sick Leave Rate & Illness Distribution</td>
+                                    <td>June 01, 2026</td>
+                                    <td>May 2026</td>
+                                    <td>Company-Wide</td>
+                                    <td><button class="btn-table-action-view" onclick="alert('Downloading PDF Report...')"><i class="fa-solid fa-download"></i> PDF</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 600;">Occupational Hazard Injury Analysis Report</td>
+                                    <td>May 15, 2026</td>
+                                    <td>Q1 2026</td>
+                                    <td>Operations (Shipyard Docks)</td>
+                                    <td><button class="btn-table-action-view" onclick="alert('Downloading PDF Report...')"><i class="fa-solid fa-download"></i> PDF</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 600;">Annual Corporate Wellness Assessment Summary</td>
+                                    <td>January 10, 2026</td>
+                                    <td>Year 2025</td>
+                                    <td>Anonymized Total Staff</td>
+                                    <td><button class="btn-table-action-view" onclick="alert('Downloading PDF Report...')"><i class="fa-solid fa-download"></i> PDF</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- ==========================================
+     MODAL: NEW VISIT FORM
+     ========================================== -->
+<div id="new-visit-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 800px; max-width: 95%;">
+        <div class="modal-header-custom">
+            <span class="modal-title-custom">Register New Patient Visit (Intake Form)</span>
+            <button class="btn-modal-close" onclick="app.closeNewVisitModal()">&times;</button>
+        </div>
+        <form id="new-visit-form" onsubmit="event.preventDefault(); app.submitNewVisit();">
+            <div class="modal-body-custom" style="max-height: calc(85vh - 120px); overflow-y: auto;">
+                
+                <!-- Autofill Profile Dropdown -->
+                <div class="form-group" style="background-color: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                    <label for="visit-autofill" style="font-weight: 700; color: #334155; margin-bottom: 6px;">Autofill from existing employee profile (Optional)</label>
+                    <select id="visit-autofill" class="form-control-custom" onchange="app.autofillVisitForm(this)">
+                        <option value="">-- Manual Entry --</option>
+                        <!-- Filled dynamically -->
+                    </select>
+                </div>
+
+                <!-- Personal Info Grid -->
+                <h4 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Personal Info</h4>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="visit-name">Name *</label>
+                        <input type="text" id="visit-name" class="form-control-custom" required placeholder="Full Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-age">Age *</label>
+                        <input type="text" id="visit-age" class="form-control-custom" required placeholder="Age" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length > 3) this.value = this.value.slice(0, 3);">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-sex">Sex *</label>
+                        <select id="visit-sex" class="form-control-custom" required>
+                            <option value="">Select Sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="visit-birthday">Birthday</label>
+                        <input type="date" id="visit-birthday" class="form-control-custom">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-contact">Contact # *</label>
+                        <input type="text" id="visit-contact" class="form-control-custom" required placeholder="09xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length > 11) this.value = this.value.slice(0, 11);">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-occupation">Occupation</label>
+                        <input type="text" id="visit-occupation" class="form-control-custom" placeholder="e.g. Crane Operator">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="visit-address">Address</label>
+                        <input type="text" id="visit-address" class="form-control-custom" placeholder="Current Address">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-dept">Department *</label>
+                        <select id="visit-dept" class="form-control-custom" required>
+                            <option value="">Select Department</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Finance">Finance</option>
+                            <option value="HR">HR</option>
+                            <option value="IT">IT</option>
+                            <option value="Logistics">Logistics</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Consultation Details -->
+                <h4 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 16px;">Consultation Details</h4>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="visit-complain">Chief Complain *</label>
+                        <input type="text" id="visit-complain" class="form-control-custom" required placeholder="Reason for consultation (e.g. Fever)">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit-consult-date">Date of Consultation *</label>
+                        <input type="date" id="visit-consult-date" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <!-- Vital Signs Section -->
+                <h4 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 16px;">Vital Signs (Check to record)</h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #f1f5f9;">
+                    <!-- BP -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-bp" onchange="app.toggleVitalInput('check-bp', 'vital-bp')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-bp" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">BP :</label>
+                        <input type="text" id="vital-bp" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="BP e.g. 120/80" disabled>
+                    </div>
+                    <!-- PR -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-pr" onchange="app.toggleVitalInput('check-pr', 'vital-pr')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-pr" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">PR :</label>
+                        <input type="text" id="vital-pr" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="PR bpm" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                    <!-- RR -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-rr" onchange="app.toggleVitalInput('check-rr', 'vital-rr')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-rr" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">RR :</label>
+                        <input type="text" id="vital-rr" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="RR cpm" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                    <!-- Temp -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-temp" onchange="app.toggleVitalInput('check-temp', 'vital-temp')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-temp" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">Temp:</label>
+                        <input type="text" id="vital-temp" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="Temp °C" disabled>
+                    </div>
+                    <!-- WT -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-wt" onchange="app.toggleVitalInput('check-wt', 'vital-wt')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-wt" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">WT :</label>
+                        <input type="text" id="vital-wt" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="WT kg" disabled>
+                    </div>
+                    <!-- HT -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="check-ht" onchange="app.toggleVitalInput('check-ht', 'vital-ht')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-ht" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">HT :</label>
+                        <input type="text" id="vital-ht" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="HT cm" disabled>
+                    </div>
+                    <!-- WC -->
+                    <div style="display: flex; align-items: center; gap: 8px; grid-column: span 3;">
+                        <input type="checkbox" id="check-wc" onchange="app.toggleVitalInput('check-wc', 'vital-wc')" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="check-wc" style="font-size: 13px; font-weight: 600; cursor: pointer; margin: 0; min-width: 45px;">WC :</label>
+                        <input type="text" id="vital-wc" class="form-control-custom" style="padding: 6px 10px; font-size:13px;" placeholder="Waist Circumference" disabled>
+                    </div>
+                </div>
+
+                <!-- Family History -->
+                <div class="form-group">
+                    <label for="visit-family-history">Family History</label>
+                    <input type="text" id="visit-family-history" class="form-control-custom" placeholder="e.g. Hypertension, Diabetes">
+                </div>
+
+                <!-- Personal / Social History -->
+                <h4 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 16px;">Personal / Social History</h4>
+                
+                <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Smoker Info -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-nonsmoker" onchange="app.toggleSocialCheckbox('check-nonsmoker', 'check-smoker', 'vital-sticks')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-nonsmoker" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">Non Smoker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-smoker" onchange="app.toggleSocialCheckbox('check-smoker', 'check-nonsmoker', 'vital-sticks')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-smoker" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">Smoker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="vital-sticks" style="font-size: 12px; color: var(--text-muted); margin: 0; white-space: nowrap;">No. of Sticks/day:</label>
+                            <input type="text" id="vital-sticks" class="form-control-custom" style="padding: 4px 8px; font-size:12px; width: 80px;" placeholder="0" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                    </div>
+
+                    <!-- Alcohol Info -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-nonalcohol" onchange="app.toggleSocialCheckbox('check-nonalcohol', 'check-alcohol', 'vital-bottles-alc')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-nonalcohol" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">Non Alcohol Drinker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-alcohol" onchange="app.toggleSocialCheckbox('check-alcohol', 'check-nonalcohol', 'vital-bottles-alc')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-alcohol" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">Alcohol Drinker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="vital-bottles-alc" style="font-size: 12px; color: var(--text-muted); margin: 0; white-space: nowrap;">No. of Bottles:</label>
+                            <input type="text" id="vital-bottles-alc" class="form-control-custom" style="padding: 4px 8px; font-size:12px; width: 80px;" placeholder="0" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                    </div>
+
+                    <!-- Beverage Info -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-nonbev" onchange="app.toggleSocialCheckbox('check-nonbev', 'check-bev', 'vital-bottles-bev')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-nonbev" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">No Beverage Drinker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="check-bev" onchange="app.toggleSocialCheckbox('check-bev', 'check-nonbev', 'vital-bottles-bev')" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="check-bev" style="font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">Beverage Drinker</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="vital-bottles-bev" style="font-size: 12px; color: var(--text-muted); margin: 0; white-space: nowrap;">No. of Bottles:</label>
+                            <input type="text" id="vital-bottles-bev" class="form-control-custom" style="padding: 4px 8px; font-size:12px; width: 80px;" placeholder="0" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-secondary-custom" onclick="app.closeNewVisitModal()">Cancel</button>
+                <button type="submit" class="btn-primary-custom" style="background-color: var(--primary-green);">Add to Queue</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL: EMR RECORD DETAILS
+     ========================================== -->
+<div id="emr-details-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 600px;">
+        <div class="modal-header-custom">
+            <span class="modal-title-custom">Employee Health Folder</span>
+            <button class="btn-modal-close" onclick="app.closeEmrDetailsModal()">&times;</button>
+        </div>
+        <div class="modal-body-custom">
+            <div class="profile-detail-grid">
+                <div class="profile-detail-avatar-box">
+                    <div class="profile-detail-avatar" id="detail-avatar">JD</div>
+                    <span class="status-pill active" id="detail-status">Active</span>
+                </div>
+                <div class="profile-detail-fields">
+                    <div class="profile-detail-field">
+                        <span class="profile-detail-label">Employee ID</span>
+                        <div class="profile-detail-value" id="detail-id">EMP-001</div>
+                    </div>
+                    <div class="profile-detail-field">
+                        <span class="profile-detail-label">Full Name</span>
+                        <div class="profile-detail-value" id="detail-name">Maria Santos</div>
+                    </div>
+                    <div class="profile-detail-field">
+                        <span class="profile-detail-label">Department</span>
+                        <div class="profile-detail-value" id="detail-dept">Operations</div>
+                    </div>
+                    <div class="profile-detail-field">
+                        <span class="profile-detail-label">Age / Gender</span>
+                        <div class="profile-detail-value" id="detail-agb">34 / Female</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                <h4 style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Active Prescriptions & Recommendations</h4>
+                <p id="detail-prescriptions" style="font-size: 14px; color: var(--text-muted); line-height: 1.5; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                    - None.
+                </p>
+            </div>
+        </div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-secondary-custom" onclick="app.closeEmrDetailsModal()">Close Folder</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL: PHARMACY RESTOCK / DISPENSE
+     ========================================== -->
+<div id="pharmacy-stock-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 480px; max-width: 95%;">
+        <div class="modal-header-custom">
+            <span class="modal-title-custom" id="stock-modal-title">Stock Action</span>
+            <button class="btn-modal-close" onclick="app.closeStockModal()">&times;</button>
+        </div>
+        <div class="modal-body-custom">
+            <p id="stock-modal-hint" style="font-size:13px; color:#64748b; margin-bottom:16px;"></p>
+            <div class="form-group">
+                <label for="stock-modal-qty">Quantity *</label>
+                <input type="number" id="stock-modal-qty" class="form-control-custom" min="1" required placeholder="Enter quantity" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+            <div class="form-group">
+                <label for="stock-modal-notes">Notes (optional)</label>
+                <input type="text" id="stock-modal-notes" class="form-control-custom" placeholder="e.g. Batch delivery from supplier">
+            </div>
+        </div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-secondary-custom" onclick="app.closeStockModal()">Cancel</button>
+            <button type="button" class="btn-primary-custom" id="stock-modal-action" style="background-color: var(--primary-green);">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL: ADD MEDICINE
+     ========================================== -->
+<div id="add-medicine-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 600px; max-width: 95%;">
+        <div class="modal-header-custom">
+            <span class="modal-title-custom">Add New Medicine to Inventory</span>
+            <button class="btn-modal-close" onclick="app.closeAddMedicineModal()">&times;</button>
+        </div>
+        <form id="add-medicine-form" onsubmit="event.preventDefault(); app.submitAddMedicine();">
+            <div class="modal-body-custom" style="max-height: calc(80vh - 120px); overflow-y: auto;">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="med-name">Medicine Name *</label>
+                        <input type="text" id="med-name" class="form-control-custom" required placeholder="e.g. Paracetamol 500mg">
+                    </div>
+                    <div class="form-group">
+                        <label for="med-category">Category</label>
+                        <select id="med-category" class="form-control-custom">
+                            <option value="">Select Category</option>
+                            <option>Analgesic</option>
+                            <option>Antipyretic</option>
+                            <option>Antibiotic</option>
+                            <option>Antihistamine</option>
+                            <option>NSAID</option>
+                            <option>Antacid</option>
+                            <option>Bronchodilator</option>
+                            <option>Topical</option>
+                            <option>Vitamins &amp; Supplements</option>
+                            <option>Others</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="med-initial-stock">Initial Stock</label>
+                        <input type="number" id="med-initial-stock" class="form-control-custom" min="0" placeholder="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                    <div class="form-group">
+                        <label for="med-min-stock">Min Stock (Low Alert)</label>
+                        <input type="number" id="med-min-stock" class="form-control-custom" min="1" placeholder="20" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                    <div class="form-group">
+                        <label for="med-max-stock">Max Stock</label>
+                        <input type="number" id="med-max-stock" class="form-control-custom" min="1" placeholder="100" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                </div>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="med-crit-stock">Critical Stock Threshold</label>
+                        <input type="number" id="med-crit-stock" class="form-control-custom" min="1" placeholder="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </div>
+                    <div class="form-group">
+                        <label for="med-unit">Unit</label>
+                        <select id="med-unit" class="form-control-custom">
+                            <option value="tablets">Tablets</option>
+                            <option value="capsules">Capsules</option>
+                            <option value="bottles">Bottles</option>
+                            <option value="pcs">Pcs</option>
+                            <option value="vials">Vials</option>
+                            <option value="tubes">Tubes</option>
+                            <option value="sachets">Sachets</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="med-batch">Batch Number (Auto-generated)</label>
+                        <input type="text" id="med-batch" class="form-control-custom" readonly style="background-color: #f1f5f9; cursor: not-allowed;" placeholder="Will be auto-generated">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="med-expiry">Expiry Date</label>
+                    <input type="date" id="med-expiry" class="form-control-custom">
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-secondary-custom" onclick="app.closeAddMedicineModal()">Cancel</button>
+                <button type="submit" class="btn-primary-custom" style="background-color: var(--primary-green);">
+                    <i class="fa-solid fa-plus"></i> Add Medicine
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL: CREATE WELLNESS PROGRAM
+     ========================================== -->
+<div id="create-program-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 600px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header-custom" style="flex-shrink: 0;">
+            <span class="modal-title-custom">Create Wellness Program</span>
+            <button class="btn-modal-close" onclick="app.closeCreateProgramModal()">&times;</button>
+        </div>
+        <form id="create-program-form" onsubmit="event.preventDefault(); app.submitCreateProgram();">
+            <div class="modal-body-custom" style="overflow-y: auto; flex: 1; padding: 20px 24px;">
+                <div class="form-group">
+                    <label for="program-title">Program Title *</label>
+                    <input type="text" id="program-title" class="form-control-custom" required placeholder="e.g. Annual Influenza Vaccination Campaign">
+                </div>
+                
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="program-category">Category *</label>
+                        <select id="program-category" class="form-control-custom" required>
+                            <option value="">Select Category</option>
+                            <option value="Physical Wellness">Physical Wellness</option>
+                            <option value="Mental Well-being">Mental Well-being</option>
+                            <option value="Immunization">Immunization</option>
+                            <option value="Health Screening">Health Screening</option>
+                            <option value="Nutrition">Nutrition</option>
+                            <option value="Safety Training">Safety Training</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="program-date">Program Date *</label>
+                        <input type="date" id="program-date" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="program-venue">Venue</label>
+                        <input type="text" id="program-venue" class="form-control-custom" placeholder="e.g. Clinic Hall A">
+                    </div>
+                    <div class="form-group">
+                        <label for="program-capacity">Participant Capacity *</label>
+                        <input type="number" id="program-capacity" class="form-control-custom" min="1" value="50" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="program-target-dept">Target Department</label>
+                    <select id="program-target-dept" class="form-control-custom">
+                        <option value="All Departments">All Departments</option>
+                        <option value="Operations">Operations</option>
+                        <option value="Finance">Finance</option>
+                        <option value="HR">HR</option>
+                        <option value="IT">IT</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="program-description">Description</label>
+                    <textarea id="program-description" class="form-control-custom" rows="3" placeholder="Brief description of the program objectives and activities..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer-custom" style="flex-shrink: 0;">
+                <button type="button" class="btn-secondary-custom" onclick="app.closeCreateProgramModal()">Cancel</button>
+                <button type="submit" class="btn-primary-custom" style="background:linear-gradient(135deg,#0a7a57,#059669);">
+                    <i class="fa-solid fa-plus"></i> Create Program
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL: LOG VISIT OUTCOME
+     ========================================== -->
+<div id="log-visit-modal" class="modal-overlay">
+    <div class="modal-content-custom" style="width: 500px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header-custom" style="flex-shrink: 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#0a7a57,#059669);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-clipboard-check" style="color:#fff;font-size:16px;"></i>
+                </div>
+                <div>
+                    <span class="modal-title-custom" style="display:block;">Log Visit Outcome</span>
+                    <span id="log-visit-patient-name" style="font-size:13px;color:#64748b;font-weight:500;"></span>
+                </div>
+            </div>
+            <button class="btn-modal-close" onclick="app.closeLogVisitModal()">&times;</button>
+        </div>
+        <div class="modal-body-custom" style="overflow-y: auto; flex: 1; padding: 20px 24px;">
+            <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Select the outcome for this consultation visit:</p>
+
+            <!-- Outcome Radio Cards -->
+            <div style="display:flex;flex-direction:column;gap:8px;" id="outcome-options">
+
+                <label class="outcome-card" for="outcome-fit">
+                    <input type="radio" id="outcome-fit" name="visit-outcome" value="Fit to Work" checked>
+                    <div class="outcome-card-inner">
+                        <div class="outcome-icon" style="background:#ecfdf5;color:#059669;">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <div class="outcome-label">Fit to Work</div>
+                            <div class="outcome-desc" style="font-size:11px;">Employee is cleared and can return to regular duties.</div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="outcome-card" for="outcome-sl">
+                    <input type="radio" id="outcome-sl" name="visit-outcome" value="Sent Home (SL)">
+                    <div class="outcome-card-inner">
+                        <div class="outcome-icon" style="background:#fef2f2;color:#ef4444;">
+                            <i class="fa-solid fa-house-medical"></i>
+                        </div>
+                        <div>
+                            <div class="outcome-label">Sent Home (Sick Leave)</div>
+                            <div class="outcome-desc" style="font-size:11px;">Employee is advised to rest at home. Sick leave recommended.</div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="outcome-card" for="outcome-rest">
+                    <input type="radio" id="outcome-rest" name="visit-outcome" value="Rest Recommended">
+                    <div class="outcome-card-inner">
+                        <div class="outcome-icon" style="background:#fffbeb;color:#d97706;">
+                            <i class="fa-solid fa-bed"></i>
+                        </div>
+                        <div>
+                            <div class="outcome-label">Rest Recommended</div>
+                            <div class="outcome-desc" style="font-size:11px;">Light duty or rest period advised before returning to full work.</div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="outcome-card" for="outcome-refer">
+                    <input type="radio" id="outcome-refer" name="visit-outcome" value="Referred to Specialist">
+                    <div class="outcome-card-inner">
+                        <div class="outcome-icon" style="background:#eff6ff;color:#3b82f6;">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <div>
+                            <div class="outcome-label">Referred to Specialist</div>
+                            <div class="outcome-desc" style="font-size:11px;">Further evaluation by a specialist is required.</div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group" style="margin-top:16px;">
+                <label for="log-visit-notes" style="font-size:13px;font-weight:600;color:#374151;">Additional Notes (optional)</label>
+                <input type="text" id="log-visit-notes" class="form-control-custom" placeholder="e.g. Additional observations or instructions" style="font-size:13px;">
+            </div>
+
+            <!-- Medicine/Prescription Section -->
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e2e8f0;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                    <i class="fa-solid fa-pills" style="color:#059669;font-size:14px;"></i>
+                    <label style="font-size:13px;font-weight:600;color:#374151;margin:0;">Prescribe Medicine</label>
+                </div>
+
+                <div class="form-group" style="margin-bottom:10px;">
+                    <select id="medicine-select-logvisit" class="form-control-custom" style="font-size:12px;padding:8px 12px;">
+                        <option value="">-- Select Medicine --</option>
+                    </select>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <div class="form-group" style="margin:0;">
+                        <input type="number" id="quantity-logvisit" class="form-control-custom" placeholder="Quantity" min="1" style="font-size:12px;padding:8px 12px;">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <input type="text" id="dosage-logvisit" class="form-control-custom" placeholder="Dosage (e.g. 500mg)" style="font-size:12px;padding:8px 12px;">
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <div class="form-group" style="margin:0;">
+                        <select id="frequency-logvisit" class="form-control-custom" style="font-size:12px;padding:8px 12px;">
+                            <option value="">Frequency</option>
+                            <option value="Once daily">Once daily</option>
+                            <option value="Twice daily">Twice daily</option>
+                            <option value="Three times daily">Three times daily</option>
+                            <option value="Four times daily">Four times daily</option>
+                            <option value="Every 4 hours">Every 4 hours</option>
+                            <option value="Every 6 hours">Every 6 hours</option>
+                            <option value="Every 8 hours">Every 8 hours</option>
+                            <option value="As needed">As needed</option>
+                            <option value="Before meals">Before meals</option>
+                            <option value="After meals">After meals</option>
+                            <option value="At bedtime">At bedtime</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <input type="text" id="duration-logvisit" class="form-control-custom" placeholder="Duration (e.g. 7 days)" style="font-size:12px;padding:8px 12px;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:10px;">
+                    <input type="text" id="instructions-logvisit" class="form-control-custom" placeholder="Special instructions (optional)" style="font-size:12px;padding:8px 12px;">
+                </div>
+                
+                <input type="hidden" id="prescribed-by-logvisit" value="@User.Identity?.Name">
+
+                <button type="button" class="btn-secondary-custom" onclick="QueueManager.addPrescriptionRow()" style="width:100%;font-size:12px;padding:8px 16px;">
+                    <i class="fa-solid fa-plus"></i> Add to Prescription List
+                </button>
+
+                <!-- Prescription List -->
+                <div id="prescription-list-logvisit" style="margin-top:12px;">
+                    <p class="text-muted small" style="font-size:11px;margin:0;">No prescriptions added yet.</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer-custom" style="flex-shrink: 0;">
+            <button type="button" class="btn-secondary-custom" onclick="app.closeLogVisitModal()">Cancel</button>
+            <button type="button" class="btn-primary-custom" style="background:linear-gradient(135deg,#0a7a57,#059669);" onclick="app.confirmLogVisit()">
+                <i class="fa-solid fa-clipboard-check"></i> Confirm &amp; Clear Patient
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ── Outcome Radio Cards ────────────────────────── */
+.outcome-card {
+    display: block;
+    cursor: pointer;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+.outcome-card:hover {
+    border-color: #0a7a57;
+    background: #f0fdf4;
+}
+.outcome-card input[type="radio"] {
+    display: none;
+}
+.outcome-card:has(input:checked) {
+    border-color: #0a7a57;
+    background: #f0fdf4;
+    box-shadow: 0 0 0 3px rgba(10,122,87,0.12);
+}
+.outcome-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.outcome-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.outcome-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+.outcome-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+</style>
