@@ -1,11 +1,12 @@
 @{
     ViewData["Title"] = "UniHealth Clinic Portal";
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
 }
 
 <!-- ==========================================
      LOGIN VIEW (Image 1)
      ========================================== -->
-<div id="login-view" class="login-wrapper">
+<div id="login-view" class="login-wrapper" style="display: @(isAuthenticated ? "none" : "flex");">
     <div class="login-card">
         <div class="login-logo-container">
             <div class="login-logo-icon">
@@ -33,7 +34,7 @@
 <!-- ==========================================
      PORTAL VIEW (Images 2-5)
      ========================================== -->
-<div id="portal-view" class="portal-container" style="display: none;">
+<div id="portal-view" class="portal-container" style="display: @(isAuthenticated ? "flex" : "none");">
     <!-- LEFT SIDEBAR -->
     <aside class="portal-sidebar">
         <div class="sidebar-brand">
@@ -109,18 +110,42 @@
             </ul>
         </nav>
 
-        <div class="sidebar-footer">
+        <div class="sidebar-footer" style="position: relative;">
             <div class="sidebar-user">
-                <div class="user-profile">
+                <div class="user-profile" id="admin-user-profile-trigger" style="cursor: pointer;">
                     <div class="user-avatar" id="user-avatar-initials">JDS</div>
                     <div class="user-details">
                         <span class="user-name" id="user-display-name">Dr. Jane D. Smith</span>
                         <span class="user-role">Head Physician</span>
                     </div>
                 </div>
-                <button class="btn-logout" title="Log Out" onclick="app.logout();">
-                    <i class="fa-solid fa-right-from-bracket"></i>
+                <button class="btn-logout" title="More Options" id="admin-user-menu-toggle">
+                    <i class="fa-solid fa-chevron-up"></i>
                 </button>
+            </div>
+            
+            <!-- User Upward Menu -->
+            <div id="admin-user-dropdown-menu" style="display: none; position: absolute; bottom: 100%; left: 12px; right: 12px; background: white; border-radius: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.15); margin-bottom: 8px;">
+                <ul style="list-style: none; margin: 0; padding: 8px 0;">
+                    <li>
+                        <a onclick="alert('Profile settings coming soon')" style="display: flex; align-items: center; padding: 12px 20px; color: #1e293b; text-decoration: none; cursor: pointer; transition: background 0.2s; border-radius: 8px; margin: 0 8px;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-user-circle" style="margin-right: 12px; color: #3b82f6; font-size: 18px;"></i>
+                            <span style="font-size: 14px; font-weight: 500;">Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="alert('Settings coming soon')" style="display: flex; align-items: center; padding: 12px 20px; color: #1e293b; text-decoration: none; cursor: pointer; transition: background 0.2s; border-radius: 8px; margin: 0 8px;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-gear" style="margin-right: 12px; color: #64748b; font-size: 18px;"></i>
+                            <span style="font-size: 14px; font-weight: 500;">Settings</span>
+                        </a>
+                    </li>
+                    <li style="border-top: 1px solid #e2e8f0; margin: 4px 8px; padding-top: 4px;">
+                        <a onclick="app.logout()" style="display: flex; align-items: center; padding: 12px 20px; color: #ef4444; text-decoration: none; cursor: pointer; transition: background 0.2s; border-radius: 8px; margin: 0;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-right-from-bracket" style="margin-right: 12px; font-size: 18px;"></i>
+                            <span style="font-size: 14px; font-weight: 500;">Logout</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </aside>
@@ -561,6 +586,140 @@
         </div>
     </main>
 </div>
+
+@if (isAuthenticated)
+{
+    <!-- Floating AI Chat Bubble -->
+    <button id="admin-ai-chat-bubble" onclick="toggleAdminAIChat()" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; z-index: 1000; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <!-- AI Chat Window (Hidden by default) -->
+    <div id="admin-ai-chat-window" style="display: none; position: fixed; bottom: 100px; right: 30px; width: 400px; max-width: calc(100vw - 60px); height: 500px; max-height: calc(100vh - 140px); background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden; display: flex; flex-direction: column;">
+        <!-- Header -->
+        <div style="background: white; border-bottom: 1px solid #e2e8f0; color: #1e293b; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-robot" style="color: #3b82f6; font-size: 18px;"></i>
+                </div>
+                <h5 style="margin: 0; font-size: 16px; font-weight: 600;">Health assistant</h5>
+            </div>
+            <button onclick="toggleAdminAIChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#1e293b'" onmouseout="this.style.background='none'; this.style.color='#94a3b8'">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <!-- Chat Container -->
+        <div id="admin-ai-chat-container" style="flex: 1; overflow-y: auto; padding: 20px; background: #f8fafc;">
+            <!-- Initial Bot Message -->
+            <div style="display: flex; margin-bottom: 16px;">
+                <div style="width: 36px; height: 36px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
+                    <i class="fa-solid fa-robot" style="font-size: 16px;"></i>
+                </div>
+                <div style="margin-left: 12px; background: white; padding: 12px 14px; border-radius: 12px; border-radius: 12px 12px 12px 4px; max-width: 80%; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #1e293b; line-height: 1.5;">Hi, I'm your clinic assistant. I can help with:</p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #64748b; line-height: 1.6;">
+                        <li>Patient information lookup</li>
+                        <li>Medication inventory status</li>
+                        <li>Appointment scheduling</li>
+                        <li>Clinical guidelines</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="admin-ai-chat-messages"></div>
+        </div>
+        
+        <!-- Input Area -->
+        <div style="padding: 14px 16px; background: white; border-top: 1px solid #e2e8f0;">
+            <form id="admin-ai-chat-form" onsubmit="return sendAdminAIChatMessage(event);" style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="admin-ai-chat-input" placeholder="Type your message" style="flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #1e293b; background: #f8fafc;">
+                <button type="submit" style="padding: 10px 14px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function toggleAdminAIChat() {
+        const chatWindow = document.getElementById('admin-ai-chat-window');
+        const bubble = document.getElementById('admin-ai-chat-bubble');
+        
+        if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+            chatWindow.style.display = 'flex';
+            bubble.style.display = 'none';
+        } else {
+            chatWindow.style.display = 'none';
+            bubble.style.display = 'flex';
+        }
+    }
+
+    function sendAdminAIChatMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById('admin-ai-chat-input');
+        const message = input.value.trim();
+        if (!message) return false;
+
+        appendAdminAIChatMessage('user', message);
+        input.value = '';
+
+        setTimeout(() => {
+            const response = getAdminAIResponse(message);
+            appendAdminAIChatMessage('ai', response);
+        }, 1000);
+
+        return false;
+    }
+
+    function appendAdminAIChatMessage(sender, text) {
+        const container = document.getElementById('admin-ai-chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.style.marginBottom = '16px';
+        messageDiv.style.display = 'flex';
+        
+        if (sender === 'user') {
+            messageDiv.style.justifyContent = 'flex-end';
+            messageDiv.innerHTML = `
+                <div style="background: #3b82f6; color: white; padding: 12px 16px; border-radius: 12px; max-width: 80%;">
+                    <p style="margin: 0; font-size: 14px;">${text}</p>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div style="width: 36px; height: 36px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div style="margin-left: 12px; background: white; padding: 12px 16px; border-radius: 12px; max-width: 80%;">
+                    <p style="margin: 0 0 4px 0; font-weight: 600; font-size: 13px;">AI Assistant</p>
+                    <p style="margin: 0; font-size: 14px;">${text}</p>
+                </div>
+            `;
+        }
+        
+        container.appendChild(messageDiv);
+        document.getElementById('admin-ai-chat-container').scrollTop = document.getElementById('admin-ai-chat-container').scrollHeight;
+    }
+
+    function getAdminAIResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        if (lowerMessage.includes('patient') || lowerMessage.includes('employee')) {
+            return 'I can help you look up patient information. Please specify the employee name or ID number, and I can retrieve their medical records.';
+        }
+        if (lowerMessage.includes('medicine') || lowerMessage.includes('medication') || lowerMessage.includes('inventory') || lowerMessage.includes('stock')) {
+            return 'For medication inventory status, please check the Pharmacy Stock tab. I can also help you identify which medicines are low in stock or expiring soon.';
+        }
+        if (lowerMessage.includes('appointment') || lowerMessage.includes('schedule')) {
+            return 'To schedule an appointment, please use the Queue Management system. I can help guide you through the patient intake process.';
+        }
+        if (lowerMessage.includes('guideline') || lowerMessage.includes('protocol')) {
+            return 'I can provide clinical guidelines and protocols. Please specify which condition or procedure you need guidance on.';
+        }
+        
+        return 'I\'m here to help! You can ask me about patient information, medication inventory, appointment scheduling, or clinical guidelines. How can I assist you today?';
+    }
+    </script>
+}
 
 <!-- ==========================================
      MODAL: NEW VISIT FORM

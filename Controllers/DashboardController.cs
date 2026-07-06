@@ -1,24 +1,46 @@
 using Capstone.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Capstone.Controllers
 {
+    [Authorize]
     [Route("api/dashboard")]
     [ApiController]
     public class DashboardController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public DashboardController(ApplicationDbContext db)
+        public DashboardController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
             _db = db;
+            _userManager = userManager;
+        }
+
+        private async Task<bool> IsEmployeeUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return false;
+
+            var employee = await _db.Employees
+                .FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+            return employee != null;
         }
 
         // GET api/dashboard/stats
         [HttpGet("stats")]
         public async Task<IActionResult> GetStats()
         {
+            // Block employee users from accessing admin dashboard
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var today = DateTime.Today;
             var startOfMonth = new DateTime(today.Year, today.Month, 1);
             var lastMonth = startOfMonth.AddMonths(-1);
@@ -65,6 +87,11 @@ namespace Capstone.Controllers
         [HttpGet("monthly-visits")]
         public async Task<IActionResult> GetMonthlyVisits()
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var today = DateTime.Today;
             var labels = new List<string>();
             var data   = new List<int>();
@@ -89,6 +116,11 @@ namespace Capstone.Controllers
         [HttpGet("top-illnesses")]
         public async Task<IActionResult> GetTopIllnesses()
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var startOfYear = new DateTime(DateTime.Today.Year, 1, 1);
 
             // Categorize chief complaints into illness groups
@@ -136,6 +168,11 @@ namespace Capstone.Controllers
         [HttpGet("dept-visits")]
         public async Task<IActionResult> GetDeptVisits()
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var startOfYear = new DateTime(DateTime.Today.Year, 1, 1);
 
             var deptGroups = await _db.Visits

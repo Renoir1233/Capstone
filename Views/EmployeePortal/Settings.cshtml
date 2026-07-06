@@ -1,0 +1,211 @@
+@model Capstone.Models.Employee
+@{
+    ViewData["Title"] = "Settings";
+    Layout = null;
+}
+
+<div style="margin-bottom: 24px;">
+    <h3 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600; color: #1e293b;">
+        <i class="fa-solid fa-gear"></i> Account Settings
+    </h3>
+    <p style="margin: 0; color: #64748b; font-size: 14px;">Manage your account preferences and security settings</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 24px;">
+    <!-- Change Password Card -->
+    <div style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px;">
+        <h5 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1e293b;">
+            <i class="fa-solid fa-shield-halved" style="color: #3b82f6;"></i> Change Password
+        </h5>
+        
+        <form asp-action="ChangePassword" method="post">
+            @Html.AntiForgeryToken()
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">Current Password</label>
+                <input type="password" name="currentPassword" required style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">New Password</label>
+                <input type="password" id="newPassword" name="newPassword" required style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+                <small style="display: block; margin-top: 4px; color: #64748b; font-size: 12px;">
+                    Password must be at least 6 characters with uppercase, lowercase, number, and special character.
+                </small>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">Confirm New Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                <i class="fa-solid fa-check-circle"></i> Update Password
+            </button>
+        </form>
+    </div>
+
+    <!-- Update Contact Info Card -->
+    <div style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px;">
+        <h5 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1e293b;">
+            <i class="fa-solid fa-phone" style="color: #10b981;"></i> Contact Information
+        </h5>
+        
+        <form asp-action="UpdateProfile" method="post">
+            @Html.AntiForgeryToken()
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">Email Address</label>
+                <input type="email" asp-for="Email" required style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">Contact Number</label>
+                <input type="text" asp-for="ContactNumber" placeholder="09171234567" required style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 6px;">Emergency Contact</label>
+                <input type="text" asp-for="EmergencyContact" placeholder="Name - Phone Number" style="width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                <i class="fa-solid fa-save"></i> Update Contact Info
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Notification Preferences -->
+<div style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 24px;">
+    <h5 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1e293b;">
+        <i class="fa-solid fa-bell" style="color: #f59e0b;"></i> Notification Preferences
+    </h5>
+    <p style="margin: 0 0 20px 0; color: #64748b; font-size: 14px;">Choose how you want to receive notifications about your health reminders and appointments</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="emailNotifications" checked style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                <div>
+                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">
+                        <i class="fa-solid fa-envelope" style="color: #3b82f6;"></i> Email Notifications
+                    </div>
+                    <small style="color: #64748b;">Receive health reminders and updates via email</small>
+                </div>
+            </label>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="smsNotifications" checked style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                <div>
+                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">
+                        <i class="fa-solid fa-mobile-screen" style="color: #10b981;"></i> SMS Notifications
+                    </div>
+                    <small style="color: #64748b;">Receive appointment reminders via SMS</small>
+                </div>
+            </label>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="healthReminders" checked style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                <div>
+                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">
+                        <i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> Health Reminders
+                    </div>
+                    <small style="color: #64748b;">Preventive health check-up reminders</small>
+                </div>
+            </label>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="prescriptionAlerts" checked style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                <div>
+                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">
+                        <i class="fa-solid fa-prescription-bottle-medical" style="color: #8b5cf6;"></i> Prescription Alerts
+                    </div>
+                    <small style="color: #64748b;">Notifications when prescriptions are ready</small>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div style="background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; margin: 20px 0;">
+        <p style="margin: 0; color: #1e40af; font-size: 14px;">
+            <i class="fa-solid fa-info-circle"></i> <strong>Note:</strong> Notification preferences are stored locally for this prototype. In production, these settings will be saved to your account.
+        </p>
+    </div>
+
+    <div style="text-align: right;">
+        <button onclick="saveNotificationPreferences()" style="padding: 10px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+            <i class="fa-solid fa-save"></i> Save Preferences
+        </button>
+    </div>
+</div>
+
+<!-- Account Information -->
+<div style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px;">
+    <h5 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1e293b;">
+        <i class="fa-solid fa-circle-info" style="color: #6366f1;"></i> Account Information
+    </h5>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+        <div>
+            <label style="display: block; color: #64748b; font-size: 13px; margin-bottom: 4px;">Username</label>
+            <p style="margin: 0; font-weight: 600; color: #1e293b; font-size: 15px;">@User.Identity?.Name</p>
+        </div>
+        <div>
+            <label style="display: block; color: #64748b; font-size: 13px; margin-bottom: 4px;">Employee Number</label>
+            <p style="margin: 0; font-weight: 600; color: #1e293b; font-size: 15px;">@Model.EmployeeNumber</p>
+        </div>
+        <div>
+            <label style="display: block; color: #64748b; font-size: 13px; margin-bottom: 4px;">Email</label>
+            <p style="margin: 0; font-weight: 600; color: #1e293b; font-size: 15px;">@Model.Email</p>
+        </div>
+        <div>
+            <label style="display: block; color: #64748b; font-size: 13px; margin-bottom: 4px;">Member Since</label>
+            <p style="margin: 0; font-weight: 600; color: #1e293b; font-size: 15px;">@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load saved preferences
+    document.addEventListener('DOMContentLoaded', function() {
+        const prefs = JSON.parse(localStorage.getItem('notificationPrefs') || '{}');
+        
+        document.getElementById('emailNotifications').checked = prefs.email !== false;
+        document.getElementById('smsNotifications').checked = prefs.sms !== false;
+        document.getElementById('healthReminders').checked = prefs.health !== false;
+        document.getElementById('prescriptionAlerts').checked = prefs.prescription !== false;
+    });
+
+    function saveNotificationPreferences() {
+        const prefs = {
+            email: document.getElementById('emailNotifications').checked,
+            sms: document.getElementById('smsNotifications').checked,
+            health: document.getElementById('healthReminders').checked,
+            prescription: document.getElementById('prescriptionAlerts').checked
+        };
+
+        localStorage.setItem('notificationPrefs', JSON.stringify(prefs));
+
+        // Show success feedback
+        alert('Notification preferences saved successfully!');
+    }
+
+    // Password validation
+    document.getElementById('confirmPassword')?.addEventListener('input', function() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = this.value;
+        
+        if (newPassword !== confirmPassword && confirmPassword.length > 0) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>

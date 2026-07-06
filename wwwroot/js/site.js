@@ -47,20 +47,8 @@ class UniHealthApp {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                // Update user display name
-                const initials = data.username.substring(0, 2).toUpperCase();
-                document.getElementById('user-avatar-initials').textContent = initials;
-                document.getElementById('user-display-name').textContent    = data.username;
-
-                // Show portal
-                document.getElementById('login-view').style.display  = 'none';
-                document.getElementById('portal-view').style.display = 'flex';
-
-                // Load all data
-                await this.loadDashboard();
-                await this.renderQueue();
-                await this.renderEmr();
-                await this.renderPharmacy();
+                // Success - redirect to home, let server decide which dashboard to show
+                window.location.href = '/';
             } else {
                 errEl.textContent = data.message || 'Invalid username or password.';
                 errEl.style.display = 'block';
@@ -85,6 +73,22 @@ class UniHealthApp {
     }
 
     bindEvents() {
+        // Check if user is already authenticated on page load
+        const portalView = document.getElementById('portal-view');
+        if (portalView && portalView.style.display !== 'none') {
+            // User is authenticated, load dashboard data
+            this.loadDashboard();
+            this.renderQueue();
+            this.renderEmr();
+            this.renderPharmacy();
+        }
+
+        // Admin user menu toggle
+        this.setupAdminUserMenu();
+
+        // Mobile menu toggle
+        this.setupMobileMenu();
+
         // Tab switching handler
         document.querySelectorAll('.nav-link-custom').forEach(link => {
             link.addEventListener('click', () => {
@@ -92,6 +96,86 @@ class UniHealthApp {
                 this.switchTab(targetTab);
             });
         });
+    }
+
+    setupMobileMenu() {
+        // Create mobile menu elements if they don't exist
+        if (!document.querySelector('.mobile-menu-toggle')) {
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            document.body.appendChild(menuToggle);
+
+            const menuOverlay = document.createElement('div');
+            menuOverlay.className = 'mobile-menu-overlay';
+            document.body.appendChild(menuOverlay);
+
+            // Toggle menu
+            menuToggle.addEventListener('click', () => {
+                const sidebar = document.querySelector('.portal-sidebar');
+                sidebar.classList.toggle('mobile-open');
+                menuOverlay.classList.toggle('active');
+            });
+
+            // Close menu when clicking overlay
+            menuOverlay.addEventListener('click', () => {
+                const sidebar = document.querySelector('.portal-sidebar');
+                sidebar.classList.remove('mobile-open');
+                menuOverlay.classList.remove('active');
+            });
+
+            // Close menu when clicking nav link on mobile
+            document.querySelectorAll('.nav-link-custom').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        const sidebar = document.querySelector('.portal-sidebar');
+                        sidebar.classList.remove('mobile-open');
+                        menuOverlay.classList.remove('active');
+                    }
+                });
+            });
+        }
+    }
+
+    setupAdminUserMenu() {
+        const userMenuToggle = document.getElementById('admin-user-menu-toggle');
+        const userProfileTrigger = document.getElementById('admin-user-profile-trigger');
+        const userDropdown = document.getElementById('admin-user-dropdown-menu');
+        
+        if (userMenuToggle && userDropdown) {
+            userMenuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isVisible = userDropdown.style.display === 'block';
+                userDropdown.style.display = isVisible ? 'none' : 'block';
+                const icon = userMenuToggle.querySelector('i');
+                icon.className = isVisible ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+            });
+
+            if (userProfileTrigger) {
+                userProfileTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = userDropdown.style.display === 'block';
+                    userDropdown.style.display = isVisible ? 'none' : 'block';
+                    const icon = userMenuToggle.querySelector('i');
+                    icon.className = isVisible ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                userDropdown.style.display = 'none';
+                const icon = userMenuToggle.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-chevron-up';
+            });
+
+            // Prevent dropdown from closing when clicking inside it
+            userDropdown.addEventListener('click', (e) => {
+                // Menu items will handle their own actions
+                userDropdown.style.display = 'none';
+                const icon = userMenuToggle.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-chevron-up';
+            });
+        }
     }
 
     switchTab(tabId) {
@@ -556,7 +640,7 @@ class UniHealthApp {
                     ? `<span class="status-pill" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;">
                            <i class="fa-solid fa-clipboard-check"></i> Completed
                        </span>`
-                    : `<span class="status-pill active"><i class="fa-regular fa-circle-check"></i> ${emp.status}</span>`;
+                    : `<span class="status-pill active"><i class="fa-regular fa-circle-check"></i> Completed</span>`;
 
                 tableBody.innerHTML += `
                     <tr>

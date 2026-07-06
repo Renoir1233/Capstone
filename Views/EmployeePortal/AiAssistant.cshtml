@@ -1,0 +1,169 @@
+@{
+    ViewData["Title"] = "AI Clinic Assistant";
+    Layout = "~/Views/EmployeePortal/_EmployeeLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <p class="text-muted">Get instant answers to your health-related questions</p>
+        <div class="alert alert-warning"
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Chat with AI Assistant</h5>
+            </div>
+            <div class="card-body" style="height: 500px; overflow-y: auto;" id="chatContainer">
+                <!-- Welcome Message -->
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="bg-light rounded p-3">
+                            <p class="mb-2"><strong>AI Assistant</strong></p>
+                            <p class="mb-0">Hello! I'm your AI Clinic Assistant. I can help you with:</p>
+                            <ul class="mb-0 mt-2">
+                                <li>General health information</li>
+                                <li>Understanding your medical records</li>
+                                <li>Medication reminders and information</li>
+                                <li>Scheduling guidance</li>
+                                <li>Wellness tips and preventive care</li>
+                            </ul>
+                            <p class="mt-2 mb-0 text-muted"><small>How can I assist you today?</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample Conversation (for prototype) -->
+                <div id="chatMessages"></div>
+            </div>
+            <div class="card-footer bg-white">
+                <form id="chatForm" onsubmit="return sendMessage(event);">
+                    <div class="input-group">
+                        <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." autocomplete="off">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </div>
+                </form>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-shield-check"></i> Your conversations are private and secure.
+                </small>
+            </div>
+        </div>
+
+        <!-- Quick Questions -->
+        <div class="card mt-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Quick Questions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary text-start" onclick="askQuestion('What are my upcoming health reminders?')">
+                        <i class="bi bi-bell"></i> What are my upcoming health reminders?
+                    </button>
+                    <button class="btn btn-outline-primary text-start" onclick="askQuestion('Can you explain my latest prescription?')">
+                        <i class="bi bi-capsule"></i> Can you explain my latest prescription?
+                    </button>
+                    <button class="btn btn-outline-primary text-start" onclick="askQuestion('What should I do if I have a fever?')">
+                        <i class="bi bi-thermometer"></i> What should I do if I have a fever?
+                    </button>
+                    <button class="btn btn-outline-primary text-start" onclick="askQuestion('How often should I get a check-up?')">
+                        <i class="bi bi-calendar-check"></i> How often should I get a check-up?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const sampleResponses = {
+            'reminders': 'Based on your records, you have the following upcoming reminders: Annual Physical Exam (due in 30 days), Flu Vaccination (due in 15 days), and Blood Pressure Check (due in 7 days). Would you like to schedule any of these?',
+            'prescription': 'Your latest prescription includes Amoxicillin 500mg (antibiotic) to be taken 3 times daily for 7 days. Remember to complete the full course even if you feel better. Take with food to avoid stomach upset.',
+            'fever': 'For fever management: 1) Rest and stay hydrated, 2) Take fever-reducing medication like Paracetamol as prescribed, 3) Monitor your temperature regularly, 4) If fever persists for more than 3 days or exceeds 39°C, please visit the clinic immediately.',
+            'checkup': 'For adults, it\'s recommended to have an annual physical examination. Depending on your age and health conditions, you may need more frequent check-ups. Your next annual physical exam is due in 30 days.',
+            'default': 'Thank you for your question. As this is a prototype, I can provide general health information. For specific medical advice, please consult with our healthcare providers at the clinic. Would you like me to help you schedule an appointment?'
+        };
+
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message === '') return false;
+
+            // Display user message
+            appendMessage('user', message);
+            input.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const response = getAIResponse(message);
+                appendMessage('ai', response);
+            }, 1000);
+
+            return false;
+        }
+
+        function askQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage(new Event('submit'));
+        }
+
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'd-flex mb-3';
+
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex-grow-1 text-end">
+                        <div class="d-inline-block bg-primary text-white rounded p-3" style="max-width: 80%;">
+                            <p class="mb-0">${text}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="bg-light rounded p-3">
+                            <p class="mb-2"><strong>AI Assistant</strong></p>
+                            <p class="mb-0">${text}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('reminder')) return sampleResponses.reminders;
+            if (lowerMessage.includes('prescription') || lowerMessage.includes('medicine')) return sampleResponses.prescription;
+            if (lowerMessage.includes('fever') || lowerMessage.includes('sick')) return sampleResponses.fever;
+            if (lowerMessage.includes('check-up') || lowerMessage.includes('checkup') || lowerMessage.includes('exam')) return sampleResponses.checkup;
+            
+            return sampleResponses.default;
+        }
+    </script>
+}

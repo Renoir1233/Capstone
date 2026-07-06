@@ -1236,3 +1236,432 @@ body, html {
         gap: 12px;
     }
 }
+
+
+/* ==========================================
+   MOBILE RESPONSIVE STYLES
+   ========================================== */
+
+/* Mobile Hamburger Menu */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+/* Tablet Breakpoint (768px - 1024px) */
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .dashboard-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .queue-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        height: auto;
+    }
+
+    .queue-column {
+        min-height: 300px;
+    }
+
+    .pharmacy-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .portal-content {
+        padding: 24px;
+    }
+
+    .emr-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
+    .filter-pills-row {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+}
+
+/* Mobile Breakpoint (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Hide scrollbar on mobile for cleaner look */
+    body, html {
+        overflow-x: hidden;
+    }
+
+    /* Login Page Mobile */
+    .login-card {
+        width: calc(100% - 32px);
+        padding: 28px 24px;
+        margin: 16px;
+    }
+
+    .login-logo-text {
+        font-size: 20px;
+    }
+
+    .login-subtitle {
+        font-size: 12px;
+    }
+
+    /* Portal Layout Mobile */
+    .portal-container {
+        flex-direction: column;
+    }
+
+    .portal-sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        width: 280px;
+        height: 100%;
+        z-index: 1000;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    }
+
+    .portal-sidebar.mobile-open {
+        left: 0;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .mobile-menu-overlay.active {
+        display: block;
+    }
+
+    /* Header Mobile */
+    .portal-header {
+        height: 60px;
+        padding: 0 60px 0 16px;
+    }
+
+    .header-title, #page-title {
+        font-size: 18px;
+        margin-left: 50px; /* Add space for hamburger button */
+    }
+
+    .header-actions {
+        gap: 8px;
+    }
+
+    .btn-primary-custom span {
+        display: none;
+    }
+
+    .btn-primary-custom {
+        padding: 10px 12px;
+    }
+
+    /* Content Mobile */
+    .portal-content {
+        padding: 16px;
+        height: calc(100vh - 60px);
+    }
+
+    /* Stats Grid Mobile */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .stats-card {
+        padding: 16px;
+    }
+
+    .stats-number {
+        font-size: 24px;
+    }
+
+    .stats-icon-wrapper {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    /* Charts Mobile */
+    .chart-card, .chart-card-full {
+        padding: 16px;
+    }
+
+    .chart-header {
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    /* Queue Cards Mobile */
+    .queue-column {
+        padding: 16px;
+        min-height: 250px;
+    }
+
+    .queue-card {
+        padding: 12px;
+    }
+
+    .queue-card-patient {
+        font-size: 13px;
+    }
+
+    .btn-queue-action {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    /* Table Mobile - Scrollable */
+    .table-card {
+        overflow-x: auto;
+    }
+
+    .table-custom {
+        min-width: 800px;
+    }
+
+    .table-custom th,
+    .table-custom td {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+
+    /* EMR Controls Mobile */
+    .emr-controls {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
+    .filter-pills-row {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-pill {
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+
+    /* Modal Mobile */
+    .modal-content-custom {
+        width: calc(100% - 32px);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .form-grid-3,
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .profile-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Sidebar Footer Mobile */
+    .sidebar-user {
+        padding: 8px;
+    }
+
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .user-name {
+        font-size: 12px;
+    }
+
+    .user-role {
+        font-size: 10px;
+    }
+
+    /* Chat Bot Mobile */
+    #admin-ai-chat-bubble,
+    #ai-chat-bubble {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 20px;
+    }
+
+    #admin-ai-chat-window,
+    #ai-chat-window {
+        width: 92%;
+        max-width: 500px;
+        height: auto;
+        bottom: 70px;
+        top: auto;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        max-height: 500px;
+    }
+    
+    #admin-ai-chat-container,
+    #ai-chat-container {
+        flex: 1 1 auto !important;
+        overflow-y: auto !important;
+        min-height: 180px !important;
+        max-height: 320px !important;
+        padding: 16px !important;
+    }
+    
+    #admin-ai-chat-messages,
+    #ai-chat-messages {
+        min-height: 0 !important;
+    }
+
+    /* Employee Portal Responsive */
+    .appointment-card,
+    .emr-record-card {
+        padding: 16px !important;
+    }
+
+    /* Appointments Grid */
+    #appointments-list > div[style*="grid"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Health Reminders Grid */
+    div[style*="grid-template-columns: repeat(3, 1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    div[style*="grid-template-columns: repeat(2, 1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Small Mobile Breakpoint (max-width: 480px) */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px;
+    }
+
+    .btn-signin {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .portal-header {
+        padding: 0 50px 0 12px;
+    }
+
+    .header-title {
+        font-size: 16px;
+    }
+
+    .btn-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+
+    .portal-content {
+        padding: 12px;
+    }
+
+    .stats-number {
+        font-size: 20px;
+    }
+
+    .chart-card,
+    .chart-card-full,
+    .stock-table-card {
+        padding: 12px;
+    }
+
+    .queue-column {
+        padding: 12px;
+    }
+
+    .modal-body-custom {
+        padding: 16px;
+    }
+
+    /* User dropdown menu mobile */
+    #admin-user-dropdown-menu,
+    #user-dropdown-menu {
+        left: 8px !important;
+        right: 8px !important;
+    }
+}
+
+/* Landscape Mobile Fix */
+@media (max-width: 768px) and (orientation: landscape) {
+    .portal-content {
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+    }
+
+    .queue-column {
+        min-height: 200px;
+    }
+}
+
+/* Touch Device Improvements */
+@media (hover: none) and (pointer: coarse) {
+    .btn-primary-custom,
+    .btn-secondary-custom,
+    .btn-table-action-view,
+    .btn-queue-action,
+    .filter-pill,
+    .nav-link-custom {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .table-custom td {
+        padding: 16px 12px;
+    }
+}

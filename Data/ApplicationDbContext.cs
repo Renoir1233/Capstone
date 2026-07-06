@@ -18,6 +18,7 @@ namespace Capstone.Data
         public DbSet<Prescription> Prescriptions { get; set; } = null!;
         public DbSet<WellnessProgram> WellnessPrograms { get; set; } = null!;
         public DbSet<WellnessProgramRegistration> WellnessProgramRegistrations { get; set; } = null!;
+        public DbSet<HealthReminder> HealthReminders { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -74,6 +75,13 @@ namespace Capstone.Data
                 .WithMany()
                 .HasForeignKey(r => r.EmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // HealthReminder -> Employee (cascade delete)
+            builder.Entity<HealthReminder>()
+                .HasOne(h => h.Employee)
+                .WithMany()
+                .HasForeignKey(h => h.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

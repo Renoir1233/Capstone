@@ -42,6 +42,19 @@ namespace Capstone.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { success = true });
         }
+
+        // POST Auth/Logout (for forms)
+        [HttpPost]
+        [Route("/Auth/Logout")]
+        public async Task<IActionResult> LogoutForm(string? returnUrl = null)
+        {
+            await _signInManager.SignOutAsync();
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return Redirect("/");
+        }
     }
 
     public class LoginRequest

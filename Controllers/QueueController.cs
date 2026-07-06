@@ -1,25 +1,45 @@
 using Capstone.Data;
 using Capstone.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Capstone.Controllers
 {
+    [Authorize]
     [Route("api/queue")]
     [ApiController]
     public class QueueController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public QueueController(ApplicationDbContext db)
+        public QueueController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
             _db = db;
+            _userManager = userManager;
+        }
+
+        private async Task<bool> IsEmployeeUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return false;
+
+            var employee = await _db.Employees
+                .FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+            return employee != null;
         }
 
         // GET api/queue  – today's queue grouped by status
         [HttpGet]
         public async Task<IActionResult> GetQueue()
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
             var today = DateTime.Today;
 
             var visits = await _db.Visits
@@ -50,6 +70,11 @@ namespace Capstone.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToQueue([FromBody] NewVisitRequest req)
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             if (string.IsNullOrWhiteSpace(req.PatientName) || string.IsNullOrWhiteSpace(req.ChiefComplain))
                 return BadRequest(new { success = false, message = "Patient name and chief complaint are required." });
 
@@ -128,6 +153,11 @@ namespace Capstone.Controllers
         [HttpPatch("{id}/callin")]
         public async Task<IActionResult> CallIn(int id)
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var visit = await _db.Visits.FindAsync(id);
             if (visit == null) return NotFound();
 
@@ -140,6 +170,11 @@ namespace Capstone.Controllers
         [HttpPatch("{id}/logvisit")]
         public async Task<IActionResult> LogVisit(int id, [FromBody] LogVisitRequest req)
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var visit = await _db.Visits.FindAsync(id);
             if (visit == null) return NotFound();
 
@@ -191,6 +226,11 @@ namespace Capstone.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVisitDetails(int id)
         {
+            if (await IsEmployeeUser())
+            {
+                return Forbid();
+            }
+
             var visit = await _db.Visits
                 .Include(v => v.Employee)
                 .Include(v => v.Prescriptions)

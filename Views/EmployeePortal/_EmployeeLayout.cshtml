@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Employee Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1e40af 0%, #2563eb 100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .navbar-custom {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .brand-section {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .brand-section h4 {
+            color: white;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .brand-section p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            margin: 5px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 px-0 sidebar">
+                <div class="brand-section">
+                    <h4><i class="bi bi-hospital"></i> UniHealth</h4>
+                    <p>Employee Portal</p>
+                </div>
+                <nav class="nav flex-column">
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="Dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="Profile">
+                        <i class="bi bi-person-circle"></i> My Profile
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="MedicalRecords">
+                        <i class="bi bi-file-medical"></i> Medical Records
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="Prescriptions">
+                        <i class="bi bi-capsule"></i> My Prescriptions
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="HealthReminders">
+                        <i class="bi bi-bell"></i> Health Reminders
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="AiAssistant">
+                        <i class="bi bi-robot"></i> AI Clinic Assistant
+                    </a>
+                    <a class="nav-link" asp-controller="EmployeePortal" asp-action="Settings">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                    <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 10px;">
+                    <form method="post" asp-controller="Auth" asp-action="Logout" asp-route-returnUrl="/">
+                        <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 col-lg-10">
+                <!-- Top Navbar -->
+                <nav class="navbar navbar-custom navbar-light sticky-top mb-4">
+                    <div class="container-fluid">
+                        <span class="navbar-brand mb-0 h5">@ViewData["Title"]</span>
+                        <div class="d-flex align-items-center">
+                            <span class="me-3">
+                                <i class="bi bi-person-badge"></i> 
+                                @ViewBag.EmployeeName (@ViewBag.EmployeeNumber)
+                            </span>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Page Content -->
+                <div class="container-fluid px-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

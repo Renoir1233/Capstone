@@ -36,6 +36,96 @@ namespace Capstone.Data
                 }
             }
 
+            // ── Seed Employee User ─────────────────────────────────────────
+            const string employeeUsername = "Employee";
+            const string employeePassword = "Employee123!";
+
+            var employeeUser = await userManager.FindByNameAsync(employeeUsername);
+            if (employeeUser == null)
+            {
+                employeeUser = new IdentityUser
+                {
+                    UserName = employeeUsername,
+                    Email = "employee@unihealth.com",
+                    EmailConfirmed = true
+                };
+                var result = await userManager.CreateAsync(employeeUser, employeePassword);
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Failed to seed Employee user: " +
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+
+            // ── Seed Employee Record ───────────────────────────────────────
+            var existingEmployee = await db.Employees.FirstOrDefaultAsync(e => e.EmployeeNumber == "EMP-001");
+            
+            if (existingEmployee == null)
+            {
+                // Create new employee
+                var employee = new Employee
+                {
+                    EmployeeNumber = "EMP-001",
+                    Name = "John Doe",
+                    Department = "IT Department",
+                    Position = "Software Developer",
+                    Age = 30,
+                    Gender = "Male",
+                    Occupation = "Software Developer",
+                    Address = "123 Main St, Quezon City",
+                    ContactNumber = "09171234567",
+                    Email = "employee@unihealth.com",
+                    EmergencyContact = "Jane Doe - 09187654321",
+                    PhilHealthId = "12-345678901-2",
+                    SSSId = "34-1234567-8",
+                    TINId = "123-456-789-000",
+                    PagIbigId = "1234-5678-9012",
+                    Birthday = new DateTime(1994, 5, 15),
+                    Status = "Active",
+                    UserId = employeeUser.Id
+                };
+                db.Employees.Add(employee);
+                await db.SaveChangesAsync();
+
+                // Add some health reminders for the employee
+                var reminders = new List<HealthReminder>
+                {
+                    new() { EmployeeId = employee.Id, ReminderType = "Annual Physical Exam", Description = "Annual physical examination required", DueDate = DateTime.Now.AddDays(30), IsCompleted = false },
+                    new() { EmployeeId = employee.Id, ReminderType = "Flu Vaccination", Description = "Annual flu shot", DueDate = DateTime.Now.AddDays(15), IsCompleted = false },
+                    new() { EmployeeId = employee.Id, ReminderType = "Blood Pressure Check", Description = "Quarterly BP monitoring", DueDate = DateTime.Now.AddDays(7), IsCompleted = false },
+                    new() { EmployeeId = employee.Id, ReminderType = "Follow-up Consultation", Description = "Follow-up for previous consultation", DueDate = DateTime.Now.AddDays(45), IsCompleted = false }
+                };
+                db.HealthReminders.AddRange(reminders);
+                await db.SaveChangesAsync();
+            }
+            else if (existingEmployee.UserId == null)
+            {
+                // Update existing employee to link with user account
+                existingEmployee.UserId = employeeUser.Id;
+                existingEmployee.Email = "employee@unihealth.com";
+                existingEmployee.Position = existingEmployee.Position ?? "Employee";
+                existingEmployee.EmergencyContact = existingEmployee.EmergencyContact ?? "Emergency Contact - 09187654321";
+                existingEmployee.PhilHealthId = existingEmployee.PhilHealthId ?? "";
+                existingEmployee.SSSId = existingEmployee.SSSId ?? "";
+                existingEmployee.TINId = existingEmployee.TINId ?? "";
+                existingEmployee.PagIbigId = existingEmployee.PagIbigId ?? "";
+                await db.SaveChangesAsync();
+
+                // Add health reminders if none exist
+                if (!await db.HealthReminders.AnyAsync(r => r.EmployeeId == existingEmployee.Id))
+                {
+                    var reminders = new List<HealthReminder>
+                    {
+                        new() { EmployeeId = existingEmployee.Id, ReminderType = "Annual Physical Exam", Description = "Annual physical examination required", DueDate = DateTime.Now.AddDays(30), IsCompleted = false },
+                        new() { EmployeeId = existingEmployee.Id, ReminderType = "Flu Vaccination", Description = "Annual flu shot", DueDate = DateTime.Now.AddDays(15), IsCompleted = false },
+                        new() { EmployeeId = existingEmployee.Id, ReminderType = "Blood Pressure Check", Description = "Quarterly BP monitoring", DueDate = DateTime.Now.AddDays(7), IsCompleted = false },
+                        new() { EmployeeId = existingEmployee.Id, ReminderType = "Follow-up Consultation", Description = "Follow-up for previous consultation", DueDate = DateTime.Now.AddDays(45), IsCompleted = false }
+                    };
+                    db.HealthReminders.AddRange(reminders);
+                    await db.SaveChangesAsync();
+                }
+            }
+
             // ── Seed Medicines ─────────────────────────────────────────────
             if (!await db.Medicines.AnyAsync())
             {

@@ -1,0 +1,272 @@
+@model Capstone.Models.Employee
+@{
+    ViewData["Title"] = "Medical Records";
+    Layout = null;
+}
+
+<!-- Page Header -->
+<div style="margin-bottom: 32px;">
+    <h6 style="margin: 0 0 8px 0; font-size: 13px; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">My Medical Records</h6>
+    <h4 style="margin: 0 0 32px 0; font-size: 28px; font-weight: 600; color: #1e293b;">Visit history</h4>
+    
+    <!-- Search and Filter Bar -->
+    <div style="display: flex; gap: 16px;">
+        <div style="flex: 1; position: relative;">
+            <i class="fa-solid fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+            <input type="text" id="emr-search" placeholder="Search by date or complaint" style="width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; background: white; color: #1e293b;">
+        </div>
+        <div style="position: relative;">
+            <select id="status-filter" style="padding: 12px 40px 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; background: white; cursor: pointer; appearance: none; color: #1e293b; min-width: 140px;">
+                <option value="all">All visits</option>
+            </select>
+            <i class="fa-solid fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Visits.Any())
+{
+    <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; color: #475569; text-align: center;">
+        <i class="fa-solid fa-info-circle" style="font-size: 24px; margin-bottom: 8px;"></i>
+        <p style="margin: 0;">You don't have any medical records yet.</p>
+    </div>
+}
+else
+{
+    <!-- Timeline Container -->
+    <div id="emr-records-container" style="position: relative; padding-left: 32px;">
+        <!-- Timeline Line -->
+        <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 1px; background: #e2e8f0;"></div>
+        
+        @foreach (var visit in Model.Visits.OrderByDescending(v => v.DateOfConsultation))
+        {
+            var hasVitals = !string.IsNullOrWhiteSpace(visit.VitalBP) || !string.IsNullOrWhiteSpace(visit.VitalTemp) || !string.IsNullOrWhiteSpace(visit.VitalPR);
+            var doctorName = "Dr. Santos";
+            
+            <div class="emr-record-card" data-complaint="@visit.ChiefComplain.ToLower()" style="position: relative; margin-bottom: 20px;">
+                <!-- Timeline Dot -->
+                <div style="position: absolute; left: -28px; top: 20px; width: 6px; height: 6px; background: white; border: 2px solid #cbd5e1; border-radius: 50%; z-index: 1;"></div>
+                
+                <!-- Card -->
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px 24px 20px 24px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div style="flex: 1;">
+                            <h5 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #1e293b;">
+                                @visit.DateOfConsultation.ToString("MMMM dd, yyyy")
+                            </h5>
+                            <p style="margin: 0; font-size: 13px; color: #64748b;">
+                                Consulted @doctorName
+                            </p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="background: #f1f5f9; color: #64748b; padding: 4px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap;">
+                                Completed
+                            </span>
+                            @if (hasVitals || visit.Prescriptions.Any())
+                            {
+                                <button onclick="toggleEMRDetails('@visit.Id')" style="background: none; border: none; color: #cbd5e1; cursor: pointer; padding: 4px 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-chevron-down emr-chevron-@visit.Id" style="font-size: 12px; transition: transform 0.3s;"></i>
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Chief Complaint / Outcome -->
+                    <p style="margin: 12px 0; font-size: 14px; color: #1e293b; line-height: 1.6;">
+                        @if (!string.IsNullOrWhiteSpace(visit.Outcome))
+                        {
+                            <text>@visit.ChiefComplain • @visit.Outcome</text>
+                        }
+                        else
+                        {
+                            <text>@visit.ChiefComplain</text>
+                        }
+                    </p>
+
+                    <!-- Details Section (Vitals and Prescriptions Summary) -->
+                    @if (hasVitals || visit.Prescriptions.Any())
+                    {
+                        <div style="display: flex; flex-wrap: wrap; gap: 16px; padding-top: 12px; align-items: center;">
+                            <!-- Vitals Summary -->
+                            @if (!string.IsNullOrWhiteSpace(visit.VitalBP))
+                            {
+                                <div style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 13px;">
+                                    <i class="fa-solid fa-heart-pulse" style="color: #cbd5e1; font-size: 14px;"></i>
+                                    <span>BP @visit.VitalBP mmHg</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(visit.VitalTemp))
+                            {
+                                <div style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 13px;">
+                                    <i class="fa-solid fa-temperature-half" style="color: #cbd5e1; font-size: 14px;"></i>
+                                    <span>@visit.VitalTemp°C</span>
+                                </div>
+                            }
+                            
+                            <!-- Prescriptions Summary -->
+                            @if (visit.Prescriptions.Any())
+                            {
+                                foreach (var rx in visit.Prescriptions)
+                                {
+                                    <div style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 13px;">
+                                        <i class="fa-solid fa-pills" style="color: #cbd5e1; font-size: 14px;"></i>
+                                        <span>@rx.MedicineName @(!string.IsNullOrWhiteSpace(rx.Dosage) ? rx.Dosage : "") • @rx.Duration</span>
+                                    </div>
+                                }
+                            }
+                            
+                            <!-- View Records Link -->
+                            <div style="margin-left: auto;">
+                                <a href="javascript:void(0)" onclick="toggleEMRDetails('@visit.Id')" style="color: #3b82f6; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-file-medical" style="font-size: 13px;"></i>
+                                    View records
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Expandable Full Details -->
+                    <div id="emr-details-@visit.Id" class="emr-details-section" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                        
+                        <!-- Full Vital Signs -->
+                        @if (hasVitals)
+                        {
+                            <div style="margin-bottom: 20px;">
+                                <p style="margin: 0 0 12px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
+                                    <i class="fa-solid fa-heart-pulse"></i> VITAL SIGNS
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalBP))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Blood pressure</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalBP mmHg</strong>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalTemp))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Temperature</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalTemp°C</strong>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalPR))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Heart rate</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalPR bpm</strong>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalRR))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Respiratory rate</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalRR /min</strong>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalWT))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Weight</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalWT kg</strong>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(visit.VitalHT))
+                                    {
+                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                                            <small style="display: block; color: #64748b; font-size: 11px; margin-bottom: 4px;">Height</small>
+                                            <strong style="color: #1e293b; font-size: 15px;">@visit.VitalHT cm</strong>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Full Prescriptions Table -->
+                        @if (visit.Prescriptions.Any())
+                        {
+                            <div>
+                                <p style="margin: 0 0 12px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
+                                    <i class="fa-solid fa-prescription-bottle-medical"></i> PRESCRIPTIONS
+                                </p>
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
+                                                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Medicine</th>
+                                                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Frequency</th>
+                                                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Duration</th>
+                                                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var rx in visit.Prescriptions)
+                                            {
+                                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                                    <td style="padding: 12px 16px;">
+                                                        <div style="font-size: 14px; color: #1e293b; font-weight: 500;">@rx.MedicineName</div>
+                                                        @if (!string.IsNullOrWhiteSpace(rx.Dosage))
+                                                        {
+                                                            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">@rx.Dosage</div>
+                                                        }
+                                                    </td>
+                                                    <td style="padding: 12px 16px; font-size: 14px; color: #475569;">@rx.Frequency</td>
+                                                    <td style="padding: 12px 16px; font-size: 14px; color: #475569;">@rx.Duration</td>
+                                                    <td style="padding: 12px 16px;">
+                                                        @if (rx.IsDispensed)
+                                                        {
+                                                            <span style="background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap;">Dispensed</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background: #fef3c7; color: #f59e0b; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap;">Pending</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<script>
+function toggleEMRDetails(visitId) {
+    const detailsSection = document.getElementById('emr-details-' + visitId);
+    const chevron = document.querySelector('.emr-chevron-' + visitId);
+    
+    if (detailsSection) {
+        if (detailsSection.style.display === 'none' || detailsSection.style.display === '') {
+            detailsSection.style.display = 'block';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+        } else {
+            detailsSection.style.display = 'none';
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+}
+
+// Search functionality
+document.getElementById('emr-search')?.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.emr-record-card');
+    
+    cards.forEach(card => {
+        const dateText = card.querySelector('h5')?.textContent.toLowerCase() || '';
+        const complaint = card.getAttribute('data-complaint') || '';
+        
+        if (dateText.includes(searchTerm) || complaint.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
